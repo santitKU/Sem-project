@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from api.serializers import DiseaseSerializer, InputSerializer
 from api.models import Disease, Input
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.parsers import MultiPartParser, FormParser
 # Create your views here.
 
@@ -34,7 +34,13 @@ class DiseaseDetail(generics.RetrieveAPIView):
     #     serializer = DiseaseSerializer(snippet)
     #     return Response(serializer.data)
 
-class InputView(viewsets.ModelViewSet):
+class InputViewSet(viewsets.ModelViewSet):
+    queryset = Input.objects.all()
+    serializer_class = InputSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
 
 
 
